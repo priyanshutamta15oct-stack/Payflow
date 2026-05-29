@@ -1,0 +1,27 @@
+services:
+  backend:
+    build: ./Backend
+    container_name: payflow_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Backend:/app
+    env_file:
+      - ./Backend/.env
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:17
+    container_name: payflow_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Priyansh123
+      POSTGRES_DB: Payflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
