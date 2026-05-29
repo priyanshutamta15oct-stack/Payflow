@@ -7,13 +7,13 @@ from database.db import Base, engine
 from models.payment_model import Payment
 
 
-Base.metadata.create_all(bind=engine)
+#Base.metadata.create_all(bind=engine)
 
 
 app = FastAPI()
 app.include_router(test_router)
 app.include_router(auth_router)
-Base.metadata.create_all(bind=engine)
+#Base.metadata.create_all(bind=engine)
 from routers.payment_router import (router as payment_router)
 app.include_router(payment_router)
 
