@@ -1,0 +1,29 @@
+# Python
+
+venv/
+**pycache**/
+*.pyc
+*.sqlite3
+
+# Environment variables
+
+.env
+
+# Node
+
+node_modules/
+dist/
+build/
+
+# VS Code
+
+.vscode/
+
+# JetBrains
+
+.idea/
+
+# OS files
+
+.DS_Store
+Thumbs.db
