@@ -27,7 +27,7 @@ function PaymentPage() {
 
     const response =
       await axios.get(
-        "http://127.0.0.1:8000/auth/profile",
+        "http://localhost:8000/auth/profile",
         {
           headers:{
             Authorization:
@@ -60,7 +60,7 @@ useEffect(() => {
 
       const response =
         await axios.get(
-          "http://127.0.0.1:8000/payment/history",
+          "http://localhost:8000/payment/history",
           {
             headers: {
               Authorization:
@@ -92,7 +92,7 @@ useEffect(() => {
 
       const response =
         await axios.post(
-          "http://127.0.0.1:8000/payment/create-order?amount=500",
+          "http://localhost:8000/payment/create-order?amount=500",
           {},
           {
             headers: {
@@ -129,7 +129,7 @@ useEffect(() => {
         ) {
 
           await axios.post(
-            "http://127.0.0.1:8000/payment/verify",
+            "http://localhost:8000/payment/verify",
             {
               razorpay_order_id:
                 response.razorpay_order_id,

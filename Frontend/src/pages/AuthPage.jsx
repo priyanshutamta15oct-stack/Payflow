@@ -45,7 +45,7 @@ function AuthPage({ onLogin }) {
       setSuccess("")
 
       await axios.post(
-        "http://127.0.0.1:8000/auth/signup",
+        "http://localhost:8000/auth/signup",
         {
           full_name: fullName,
           email: email,
@@ -105,7 +105,7 @@ function AuthPage({ onLogin }) {
 
       const response =
         await axios.post(
-          "http://127.0.0.1:8000/auth/login",
+          "http://localhost:8000/auth/login",
           formData
         )
 
