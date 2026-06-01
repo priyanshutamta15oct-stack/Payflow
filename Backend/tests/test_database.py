@@ -4,6 +4,7 @@ from main import app
 
 from database.session import get_db
 from database.db import Base
+import pytest
 
 
 TEST_DATABASE_URL = (
@@ -31,8 +32,6 @@ def override_get_db():
 
     finally:
         db.close()
-
-import pytest
 
 
 @pytest.fixture(scope="function")

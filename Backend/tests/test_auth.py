@@ -40,7 +40,7 @@ def test_login(db_session):
         "/auth/signup",
         json={
             "full_name": "Test User",
-            "email": "test2@example.com",
+            "email": "test@example.com",
             "password": "test123"
         }
     )
@@ -48,7 +48,7 @@ def test_login(db_session):
     response = client.post(
         "/auth/login",
         data={
-            "username": "test2@example.com",
+            "username": "test@example.com",
             "password": "test123"
         }
     )
@@ -98,3 +98,46 @@ def test_profile_route(db_session):
     assert data["email"] == "profile@example.com"
 
     assert data["full_name"] == "Test User"
+
+def test_logout_blacklist(db_session):
+
+    client.post(
+        "/auth/signup",
+        json={
+            "full_name": "Logout User",
+            "email": "logout@example.com",
+            "password": "test123"
+        }
+    )
+
+    login_response = client.post(
+        "/auth/login",
+        data={
+            "username": "logout@example.com",
+            "password": "test123"
+        }
+    )
+
+    token = login_response.json()["access_token"]
+
+    logout_response = client.post(
+        "/auth/logout",
+        headers={
+            "Authorization": f"Bearer {token}"
+        }
+    )
+
+    assert logout_response.status_code == 200
+
+    profile_response = client.get(
+        "/auth/profile",
+        headers={
+            "Authorization": f"Bearer {token}"
+        }
+    )
+
+    assert profile_response.status_code == 401
+
+    assert profile_response.json() == {
+        "detail": "You have been logged out"
+    }
