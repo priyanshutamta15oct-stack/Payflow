@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, logger
 from fastapi import Depends
 from fastapi import HTTPException
 
@@ -27,7 +27,7 @@ from jose import JWTError
 
 from core.security import create_access_token
 from core.config import settings
-
+from core.logger import logger
 
 
 router = APIRouter(
@@ -42,23 +42,25 @@ def signup(
     db: Session = Depends(get_db)
 ):
 
-    created_user = create_user(
-        db,
-        user.full_name,
-        user.email,
-        user.password
-    )
+    try:
 
-    if not created_user:
+        created_user = create_user(
+            db,
+            user.full_name,
+            user.email,
+            user.password
+        )
+
+        return {
+            "message": "User Created Successfully"
+        }
+
+    except ValueError as e:
 
         raise HTTPException(
             status_code=400,
-            detail="Email already exists"
+            detail=str(e)
         )
-
-    return {
-        "message": "User Created Successfully"
-    }
 
 
 @router.post(
@@ -78,10 +80,18 @@ def login(
 
     if not token:
 
+        logger.warning(
+            f"Authentication failed for: {form_data.username}"
+        )
+
         raise HTTPException(
             status_code=401,
             detail="Invalid Credentials"
         )
+
+    logger.info(
+        f"Authentication successful for: {form_data.username}"
+    )
 
     return {
         "access_token": token["access_token"],
