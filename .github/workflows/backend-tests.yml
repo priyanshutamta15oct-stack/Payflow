@@ -47,6 +47,7 @@ jobs:
 
       - name: Set up Python
         uses: actions/setup-python@v5
+
         with:
           python-version: "3.14"
 
@@ -55,10 +56,13 @@ jobs:
           pip install -r Backend/requirements.txt
 
       - name: Run tests
+
         env:
           DATABASE_URL: postgresql://postgres:Priyansh123@localhost:5432/payflow_test
           SECRET_KEY: supersecretkey
           ALGORITHM: HS256
+          ACCESS_TOKEN_EXPIRE_MINUTES: 30
+          REFRESH_TOKEN_EXPIRE_DAYS: 7
           REDIS_HOST: localhost
           REDIS_PORT: 6379
 
