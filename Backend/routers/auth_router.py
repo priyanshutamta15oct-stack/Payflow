@@ -20,6 +20,13 @@ from services.auth_service import (
 from core.dependencies import get_current_user
 from models.user_model import User
 from fastapi.security import OAuth2PasswordRequestForm
+from database.redis_db import redis_client
+from core.dependencies import oauth2_scheme
+from jose import jwt
+from jose import JWTError
+
+from core.security import create_access_token
+from core.config import settings
 
 
 
@@ -77,7 +84,8 @@ def login(
         )
 
     return {
-        "access_token": token,
+        "access_token": token["access_token"],
+        "refresh_token": token["refresh_token"],
         "token_type": "bearer"
     }
 
@@ -90,3 +98,43 @@ def get_profile(
         "full_name": current_user.full_name,
         "email": current_user.email
     }
+
+@router.post("/logout")
+def logout(token: str = Depends(oauth2_scheme)):
+    redis_client.set(token, "blacklisted", ex=1800)  # Blacklist token for 1 hour
+    return {
+        "message": "Logged out successfully"
+    }
+
+@router.post("/refresh")
+def refresh_token(refresh_token: str):
+
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Invalid refresh token"
+    )
+
+    try:
+
+        payload = jwt.decode(
+            refresh_token,
+            settings.SECRET_KEY,
+            algorithms=[settings.ALGORITHM]
+        )
+
+        email = payload.get("sub")
+
+        if email is None:
+            raise credentials_exception
+
+        new_access_token = create_access_token(
+            {"sub": email}
+        )
+
+        return {
+            "access_token": new_access_token,
+            "token_type": "bearer"
+        }
+
+    except JWTError:
+        raise credentials_exception

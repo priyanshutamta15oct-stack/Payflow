@@ -5,6 +5,7 @@ from routers.auth_router import router as auth_router
 from models.user_model import User
 from database.db import Base, engine
 from models.payment_model import Payment
+from database.redis_db import redis_client
 
 
 #Base.metadata.create_all(bind=engine)
@@ -31,3 +32,10 @@ def home():
     return {
         "message": "Welcome to the Payflow API!"
     }
+
+
+@app.get("/redis-test")
+def redis_test():
+    redis_client.set("name", "Payflow")
+    value = redis_client.get("name")
+    return {"redis_value": value}

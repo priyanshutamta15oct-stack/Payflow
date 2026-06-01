@@ -1,7 +1,7 @@
 # Python
 
 venv/
-**pycache**/
+__pycache__/
 *.pyc
 *.sqlite3
 
@@ -27,3 +27,7 @@ build/
 
 .DS_Store
 Thumbs.db
+
+# Pytest
+
+.pytest_cache/
