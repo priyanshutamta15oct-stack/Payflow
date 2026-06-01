@@ -9,7 +9,7 @@ import pytest
 
 TEST_DATABASE_URL = (
     "postgresql://postgres:Priyansh123"
-    "@postgres:5432/payflow_test"
+    "@localhost:5432/payflow_test"
 )
 
 engine = create_engine(TEST_DATABASE_URL)
