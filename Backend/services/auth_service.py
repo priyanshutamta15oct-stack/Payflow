@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from models.user_model import User
 
 from core.logger import logger
+from core.exceptions import AppException
 
 from core.security import (
     hash_password,
@@ -18,7 +19,9 @@ def create_user(
         password: str
 ):
 
-    logger.info(f"Signup attempt for email: {email}")
+    logger.info(
+        f"Signup attempt for email: {email}"
+    )
 
     existing_user = db.query(User).filter(
         User.email == email
@@ -30,7 +33,10 @@ def create_user(
             f"Duplicate signup attempt: {email}"
         )
 
-        raise ValueError("Email already registered")
+        raise AppException(
+            status_code=400,
+            detail="Email already registered"
+        )
 
     hashed_password = hash_password(password)
 
@@ -74,7 +80,10 @@ def login_user(
             f"Login failed - user not found: {email}"
         )
 
-        return None
+        raise AppException(
+            status_code=401,
+            detail="Invalid credentials"
+        )
 
     # PASSWORD CHECK
     if not verify_password(
@@ -86,7 +95,10 @@ def login_user(
             f"Login failed - invalid password: {email}"
         )
 
-        return None
+        raise AppException(
+            status_code=401,
+            detail="Invalid credentials"
+        )
 
     # ACCESS TOKEN
     access_token = create_access_token(

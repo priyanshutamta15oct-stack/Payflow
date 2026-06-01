@@ -42,25 +42,16 @@ def signup(
     db: Session = Depends(get_db)
 ):
 
-    try:
+    create_user(
+        db,
+        user.full_name,
+        user.email,
+        user.password
+    )
 
-        created_user = create_user(
-            db,
-            user.full_name,
-            user.email,
-            user.password
-        )
-
-        return {
-            "message": "User Created Successfully"
-        }
-
-    except ValueError as e:
-
-        raise HTTPException(
-            status_code=400,
-            detail=str(e)
-        )
+    return {
+        "message": "User Created Successfully"
+    }
 
 
 @router.post(
@@ -77,17 +68,6 @@ def login(
         form_data.username,
         form_data.password
     )
-
-    if not token:
-
-        logger.warning(
-            f"Authentication failed for: {form_data.username}"
-        )
-
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid Credentials"
-        )
 
     logger.info(
         f"Authentication successful for: {form_data.username}"

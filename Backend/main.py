@@ -6,10 +6,17 @@ from models.user_model import User
 from database.db import Base, engine
 from models.payment_model import Payment
 from database.redis_db import redis_client
+from core.exceptions import (
+    AppException,
+    app_exception_handler,
+    generic_exception_handler
+)
 
 
 #Base.metadata.create_all(bind=engine)
 
+app.add_exception_handler(AppException, app_exception_handler)
+app.add_exception_handler(Exception, generic_exception_handler)
 
 app = FastAPI()
 app.include_router(test_router)
