@@ -1,0 +1,67 @@
+name: Backend Tests
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  test:
+
+    runs-on: ubuntu-latest
+
+    services:
+
+      postgres:
+        image: postgres:17
+
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: Priyansh123
+          POSTGRES_DB: payflow_test
+
+        ports:
+          - 5432:5432
+
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+      redis:
+        image: redis:7
+
+        ports:
+          - 6379:6379
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: |
+          pip install -r Backend/requirements.txt
+
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql://postgres:Priyansh123@localhost:5432/payflow_test
+          SECRET_KEY: supersecretkey
+          ALGORITHM: HS256
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+
+        run: |
+          cd Backend
+          pytest
